@@ -45,7 +45,7 @@ export default function LoginPage() {
             value={email}
             onChange={e => setEmail(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleLogin()}
-            placeholder="admin@shishax.com"
+            placeholder="Email address"
             autoFocus
             style={inp}
             onFocus={e => (e.target.style.borderColor = '#FF8000')}
