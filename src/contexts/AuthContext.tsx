@@ -26,7 +26,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [teamUser, setTeamUser]   = useState<TeamUser | null>(null)
   const [loading, setLoading]     = useState(true)
 
-  async function loadTeamUser(uid: string) {
+  async function loadTeamUser(uid: string, email?: string) {
+    // For the shared admin account, bypass DB lookup entirely
+    if (email === 'admin@shishax.com') {
+      setTeamUser({ id: uid, email: 'admin@shishax.com', display_name: 'Team Admin', role: 'admin', active: true })
+      return
+    }
     try {
       const { data } = await Promise.race([
         supabase.from('team_users').select('*').eq('auth_user_id', uid).eq('active', true).single(),
@@ -44,13 +49,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session)
-      if (session?.user) await loadTeamUser(session.user.id)
+      if (session?.user) await loadTeamUser(session.user.id, session.user.email)
       setLoading(false)
     })
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session)
-      if (session?.user) await loadTeamUser(session.user.id)
+      if (session?.user) await loadTeamUser(session.user.id, session.user.email)
       else setTeamUser(null)
       setLoading(false)
     })
