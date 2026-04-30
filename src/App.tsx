@@ -22,10 +22,17 @@ function Guard({ children, adminOnly = false }: { children: React.ReactNode; adm
   return <>{children}</>
 }
 
+function LoginRoute() {
+  const { session, loading } = useAuth()
+  if (loading) return null
+  if (session) return <Navigate to="/" replace />
+  return <LoginPage />
+}
+
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/login" element={<LoginPage />} />
+      <Route path="/login" element={<LoginRoute />} />
       <Route path="/" element={<Guard><CapturePage /></Guard>} />
       <Route path="/list" element={<Guard><ListPage /></Guard>} />
       <Route path="/settings" element={<Guard adminOnly><SettingsPage /></Guard>} />
