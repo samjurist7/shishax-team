@@ -27,9 +27,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading]     = useState(true)
 
   async function loadTeamUser(uid: string, email?: string) {
-    // For the shared admin account, bypass DB lookup entirely
+    // For the shared admin account, use the known DB row id
     if (email === 'admin@shishax.com') {
-      setTeamUser({ id: uid, email: 'admin@shishax.com', display_name: 'Team Admin', role: 'admin', active: true })
+      setTeamUser({ id: '61953065-3add-4740-a691-b527aeb2e420', email: 'admin@shishax.com', display_name: 'Team Admin', role: 'admin', active: true })
       return
     }
     try {
