@@ -61,6 +61,7 @@ export default function CapturePage() {
   const [activeEvent, setActiveEvent] = useState('')
   const [firstName, setFirstName]     = useState('')
   const [lastName, setLastName]       = useState('')
+  const [businessName, setBusinessName] = useState('')
   const [email, setEmail]             = useState('')
   const [phone, setPhone]             = useState('')
   const [preferred, setPreferred]     = useState<PreferredContact>('WhatsApp')
@@ -81,7 +82,7 @@ export default function CapturePage() {
   }, [])
 
   const reset = useCallback(() => {
-    setFirstName(''); setLastName(''); setEmail(''); setPhone('')
+    setFirstName(''); setLastName(''); setBusinessName(''); setEmail(''); setPhone('')
     setPreferred('WhatsApp'); setInquiry(null); setNotes(''); setCards([]); setError(''); setSaved(null)
   }, [])
 
@@ -120,6 +121,7 @@ export default function CapturePage() {
       email: email.trim() || null, phone: phone.trim() || null,
       preferred_contact: preferred, inquiry_type: inquiry ?? null,
       notes: notes.trim() || null,
+      business_name: businessName.trim() || null,
       business_card_urls: cardUrls.length ? cardUrls : null,
       tags, event_tag: activeEvent,
       captured_by_name: teamUser?.display_name ?? null,
@@ -165,6 +167,7 @@ export default function CapturePage() {
       <div style={{ padding: '24px 20px 48px', maxWidth: 480, margin: '0 auto' }}>
         <Field label="First Name *" value={firstName} onChange={setFirstName} autoFocus />
         <Field label="Last Name" value={lastName} onChange={setLastName} />
+        <Field label="Business Name" value={businessName} onChange={setBusinessName} placeholder="Lounge, shop, or company name" />
         <Field label="Email" value={email} onChange={setEmail} type="email" placeholder="they@example.com" />
         <Field label="WhatsApp / Phone" value={phone} onChange={setPhone} type="tel" placeholder="+1 555 000 0000" />
 
