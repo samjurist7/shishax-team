@@ -27,16 +27,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading]     = useState(true)
 
   async function loadTeamUser(uid: string) {
-    const { data } = await supabase
-      .from('team_users')
-      .select('*')
-      .eq('auth_user_id', uid)
-      .eq('active', true)
-      .single()
-    setTeamUser(data as TeamUser | null)
-    // Update last_seen_at
-    if (data) {
-      void supabase.from('team_users').update({ last_seen_at: new Date().toISOString() }).eq('id', data.id)
+    try {
+      const { data } = await Promise.race([
+        supabase.from('team_users').select('*').eq('auth_user_id', uid).eq('active', true).single(),
+        new Promise<{ data: null }>((resolve) => setTimeout(() => resolve({ data: null }), 5000)),
+      ])
+      setTeamUser(data as TeamUser | null)
+      if (data) {
+        void supabase.from('team_users').update({ last_seen_at: new Date().toISOString() }).eq('id', (data as TeamUser).id)
+      }
+    } catch {
+      setTeamUser(null)
     }
   }
 
@@ -51,6 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(session)
       if (session?.user) await loadTeamUser(session.user.id)
       else setTeamUser(null)
+      setLoading(false)
     })
 
     return () => subscription.unsubscribe()
